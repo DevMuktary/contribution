@@ -49,7 +49,7 @@ export async function POST(request) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
       }
 
-      // 7. Save the Contribution to the Database
+      // 7. Save the Contribution to the Database o
       // We use 'upsert' or 'create' to avoid duplicates if the webhook fires twice
       const contribution = await prisma.contribution.create({
         data: {
