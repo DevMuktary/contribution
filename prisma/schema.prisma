@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String          @id @default(cuid())
+  name           String
+  email          String          @unique
+  password       String
+  isAdmin        Boolean         @default(false)
+  createdAt      DateTime        @default(now())
+  
+  // Relations
+  virtualAccount VirtualAccount?
+  contributions  Contribution[]
+}
+
+model VirtualAccount {
+  id                    String   @id @default(cuid())
+  bankCode              String
+  accountNumber         String   @unique
+  accountName           String
+  bankName              String
+  reservationReference  String?  // To store the ID returned by Payment Point
+  
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id])
+}
+
+model Contribution {
+  id                    String   @id @default(cuid())
+  amount                Float
+  transactionReference  String   @unique // The Payment Point transaction ID
+  status                String   @default("SUCCESS")
+  createdAt             DateTime @default(now())
+  
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id])
+}
+
+model SystemSettings {
+  id                    String   @id @default(cuid())
+  targetAmount          Float    @default(0)
+  deadlineDate          DateTime?
+  monthlyRequiredAmount Float    @default(0)
+}
