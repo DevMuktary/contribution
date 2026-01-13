@@ -15,7 +15,6 @@ model User {
   isAdmin        Boolean         @default(false)
   createdAt      DateTime        @default(now())
   
-  // Relations
   virtualAccount VirtualAccount?
   contributions  Contribution[]
 }
@@ -26,8 +25,7 @@ model VirtualAccount {
   accountNumber         String   @unique
   accountName           String
   bankName              String
-  reservationReference  String?  // To store the ID returned by Payment Point
-  
+  reservationReference  String?
   userId                String   @unique
   user                  User     @relation(fields: [userId], references: [id])
 }
@@ -35,17 +33,32 @@ model VirtualAccount {
 model Contribution {
   id                    String   @id @default(cuid())
   amount                Float
-  transactionReference  String   @unique // The Payment Point transaction ID
+  transactionReference  String   @unique
   status                String   @default("SUCCESS")
   createdAt             DateTime @default(now())
-  
   userId                String
   user                  User     @relation(fields: [userId], references: [id])
 }
 
-model SystemSettings {
-  id                    String   @id @default(cuid())
-  targetAmount          Float    @default(0)
-  deadlineDate          DateTime?
-  monthlyRequiredAmount Float    @default(0)
+// --- NEW LOGIC START ---
+model SavingsGoal {
+  id           String   @id @default(cuid())
+  title        String   // e.g. "December Wedding 2026"
+  cashOutDate  DateTime // The Countdown stops here
+  isActive     Boolean  @default(true)
+  
+  // Relations
+  monthlyTargets MonthlyTarget[]
+}
+
+model MonthlyTarget {
+  id            String      @id @default(cuid())
+  month         Int         // 1 = January, 2 = February
+  year          Int         // 2026
+  targetAmount  Float       // e.g. 50,000 for this specific month
+  
+  goalId        String
+  goal          SavingsGoal @relation(fields: [goalId], references: [id])
+  
+  @@unique([month, year, goalId]) // Prevent duplicate targets for same month
 }
