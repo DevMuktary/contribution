@@ -29,7 +29,7 @@ export default async function Home() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white p-8 rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold mb-4">Welcome to Friends Contribution</h1>
+            <h1 className="text-2xl font-bold mb-4">Welcome to the Contribution Platform</h1>
             <p className="mb-4">You need to sign in to view your dashboard.</p>
             <a href="/api/auth/signin" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Sign In</a>
         </div>
